@@ -6,14 +6,16 @@ repos:
     hooks:
       # Run the linter.
       - id: ruff
-        args: [--fix]
+        name: Ruff (linter)
+        args: [ --fix ]
       # Run the formatter.
       - id: ruff-format
+        name: Ruff (formatter)
   - repo: local
     hooks:
       # Radon MI and Halstead checks
       - id: radon-check
-        name: Radon Maintainability and Halstead Checks
+        name: Radon maintainability and Halstead checks
         entry: |
           bash -c 'for file in "$@"; do 
             echo "Checking $file"; 
@@ -28,5 +30,5 @@ repos:
     rev: 'v2.3'
     hooks:
       - id: vulture
-        name: vulture (Dead code detection)
+        name: Vulture (dead code detection)
         args: [--min-confidence, '80']
