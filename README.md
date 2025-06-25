@@ -4,7 +4,10 @@ Cleaning FLO-2D outputs using FABDEM-derived terrain data
 This repo contains code to attempt to effectively vectorize outputs from a FLO-2D model used to assess flood hazard in La Plata, Argentina. The original outputs were created with satellite-derived DEMs of mixed resolution and quality. The resulting data proved difficult to cleanly "smooth" as requested by the UNLP for use in designating flood hazard zones in the municipal code. Here, I attempt to established a baseline smoothing approach using GRASS GIS (stored in .sh scripts) and a more sophisticated approach using Fathom's 30m resolution FABDEM product and impervious surface cover.
 
 ## Setup
-Install the repo using `git clone`. Navigate to the root directory and install the virutal environment and dependencies using `uv sync`. Run the main script with `uv run main.py`
+Install the repo using `git clone`. Navigate to the root directory and install the virutal environment and dependencies using `uv sync`. Once that's done, run `uv run pre-commit install` in the root directory to set up the precommit hooks (configured in `.pre-commit-config.yaml`).
+
+Run the main script with `uv run main.py`.
+
 
 ### Repo structure
 Currently, the draft processing is carried out in `main.ipynb`. We use `pystac-client` and `rioxarray` to retrieve FABDEM data efficeintly and then `whitebox` for terrain modeling. Data are stored locally in the `data` subdirectory. While we are currently testing on Cuenca el Gato, the goal is to eventually scale the analysis to the entire Partido de La Plata, at which point we will switch to using `main.py` to run the full processing script.
