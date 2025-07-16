@@ -149,6 +149,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "fabdem" },
     { name = "geopandas" },
+    { name = "grass-session" },
     { name = "ipykernel" },
     { name = "matplotlib" },
     { name = "odc" },
@@ -174,6 +175,7 @@ dev = [
 requires-dist = [
     { name = "fabdem", specifier = ">=0.1.0" },
     { name = "geopandas", specifier = ">=1.1.0" },
+    { name = "grass-session", specifier = ">=0.5" },
     { name = "ipykernel", specifier = ">=6.29.5" },
     { name = "matplotlib", specifier = ">=3.10.3" },
     { name = "odc", specifier = ">=0.1.2" },
@@ -501,6 +503,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/78/af/b33ec510d81eb32bde0b6e954dba80289c4d88a78cf8e12d2222378b2ad4/geoutils-0.1.17.tar.gz", hash = "sha256:ff17b8f226b3e5b86f33364d996bda48520a722fb5325485183700177fa2a00e", size = 1102055 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/23/27/2013dffbe62450fdf898df083cb7e58e87ea500e9c6f43990d5741fe85ed/geoutils-0.1.17-py3-none-any.whl", hash = "sha256:e314828ce3af30bc42ded648d9007eac8b5628d65525bb49c237b1e6de1265df", size = 148283 },
+]
+
+[[package]]
+name = "grass-session"
+version = "0.5"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/fa/df/e6929fc29ddaf44dd7f7638cb0e1e9df1baebd2f84dd29d0626a6ddc3ae0/grass-session-0.5.tar.gz", hash = "sha256:7155314535790145da8e2e31b0d20cd2be91477d54083a738b5c319164e7f03b", size = 10425 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/70/ef/20bf6c2468c57ab74506db4f24557e5a98678900426d0184ae5c63cbba55/grass_session-0.5-py2.py3-none-any.whl", hash = "sha256:ce03a53e28cc14bc7fff91482e83ed4f174a1325732c4333ed183dd15de39f8d", size = 31552 },
 ]
 
 [[package]]

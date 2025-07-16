@@ -7,6 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "fabdem>=0.1.0",
     "geopandas>=1.1.0",
+    "grass-session>=0.5",
     "ipykernel>=6.29.5",
     "matplotlib>=3.10.3",
     "odc>=0.1.2",

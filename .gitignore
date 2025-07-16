@@ -1,3 +1,6 @@
+# ignore GRASS data
+src/grassdata/
+
 # ignore data
 data/
 
