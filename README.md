@@ -1,33 +1,32 @@
 # ciut-inundaciones
-Cleaning FLO-2D outputs using FABDEM-derived terrain data
 
-This repo contains code to attempt to effectively vectorize outputs from a FLO-2D model used to assess flood hazard in La Plata, Argentina. The original outputs were created with satellite-derived DEMs of mixed resolution and quality. The resulting data proved difficult to cleanly "smooth" as requested by the UNLP for use in designating flood hazard zones in the municipal code. Here, I attempt to established a baseline smoothing approach using GRASS GIS (stored in .sh scripts) and a more sophisticated approach using Fathom's 30m resolution FABDEM product and impervious surface cover.
+Limpieza y procesamiento de salidas del modelo FLO-2D para evaluación de riesgo de inundación en La Plata, Argentina.
 
-## Setup
-Install the repo using `git clone`. Navigate to the root directory and install the virutal environment and dependencies using `uv sync`. Once that's done, run `uv run pre-commit install` in the root directory to set up the precommit hooks (configured in `.pre-commit-config.yaml`).
+## Descripción
 
-Run the main script with `uv run main.py`.
+Este repositorio contiene código para vectorizar y suavizar efectivamente las salidas de un modelo FLO-2D utilizado para evaluar el riesgo de inundación en La Plata, Argentina. Los datos originales fueron creados con DEMs derivados de satélite de resolución y calidad mixta. Los datos resultantes resultaron difíciles de "suavizar" limpiamente según lo solicitado por la UNLP para su uso en la designación de zonas de riesgo de inundación en el código municipal. Aquí utilizo el suavizado Chaiken de GRASS GIS para lograr resultados satisfactorios.
 
+## Metodología de procesamiento
 
-### Repo structure
-Currently, the draft processing is carried out in `main.ipynb`. We use `pystac-client` and `rioxarray` to retrieve FABDEM data efficeintly and then `whitebox` for terrain modeling. Data are stored locally in the `data` subdirectory. While we are currently testing on Cuenca el Gato, the goal is to eventually scale the analysis to the entire Partido de La Plata, at which point we will switch to using `main.py` to run the full processing script.
+Los datos originales de riesgo de inundación fueron creados por la Facultad de Ingeniería Hídrica de la UNLP y proporcionados por el CIUT. Los detalles sobre cómo fueron creados están disponibles en el [Plan de Reducción del Riesgo de Inundaciones en la región de La Plata](https://sedici.unlp.edu.ar/handle/10915/165109).
 
-## Data sources
-The original flood hazard data were created by the Facultad de Ingeniería Hídrica at the UNLP and provided to me by the CIUT. Details on how they were created are available in the [Plan de Reducción del Riesgo de Inundaciones en la región de La Plata](https://sedici.unlp.edu.ar/handle/10915/165109).
+Los datos originales del modelo FLO-2D fueron proporcionados en formato vectorial. Aunque esto parece conveniente, el formato vectorial es en realidad más difícil de suavizar porque carece de las relaciones espaciales implícitas entre píxeles que proporcionan los rásters. Por lo tanto, todo fue convertido de vuelta a ráster para que el suavizado funcionara correctamente.
 
-FABDEM is a 30-meter resolution satellite-derived DEM that uses machine learning to correct for the presence of trees and buildings and produce something approximating a LiDAR-derived DEM. It was developed by Fathom specifically for the purpose of developing global flood hazard models. More information is available here.
+El primer paso fue convertir los datos vectoriales proporcionados de vuelta a formato ráster. Se filtró la categoría "Muy Baja/Nula" ya que está implícitamente definida como todas las áreas donde las otras tres categorías no están presentes. Esto redujo significativamente los costos de procesamiento ya que Muy Baja/Nula es la clase más grande y estaba ralentizando todo el proceso.
 
-Impervious surface cover at 30-meter resolution is available from various datasets; I am considering using [GISA](https://gee-community-catalog.org/projects/gisa/) for this project, although I will need to look into it more.
+Luego se creó un ráster objetivo con resolución de 2.5m en lugar de los 10m originales. La misma cobertura espacial, solo que con mayor resolución. Esto permitió agregar ruido aleatorio a los bordes—solo 2.5m de variación, no 10m—para crear límites más naturales y fluidos en lugar de bordes blocosos típicos de rásters. Esto es algo arbitrario y se hizo específicamente para propósitos de visualización, no para análisis espacial.
 
-## Roadmap
-1. Create a basic, smoothed version of the FLO-2D outputs for Cuenca El Gato using smoothing algorithms available in GRASS GIS ✅
+Después de eso se aplicó suavizado Chaiken usando GRASS GIS, que es un algoritmo de suavizado de polígonos. Se corrieron seis iteraciones, lo cual tomó bastante tiempo porque es computacionalmente costoso para áreas grandes. Los parámetros exactos surgieron de prueba y error, así que no son necesariamente óptimos pero funcionaron suficientemente bien para los propósitos del proyecto.
 
-2. Use FABDEM and Whitebox to develop local terrain models (slope, hillshade, TRI, TWI) ☐
+Finalmente, se convirtió todo a multi-polígonos por tipo de amenaza y se disolvieron las geometrías para crear una sola geometría por nivel de prioridad. Para las áreas superpuestas, se priorizaron los niveles de amenaza más altos—entonces si alto y medio se superponen, se clasificó como alto. También se creó una versión en EPSG:4326 para PMTiles.
 
-3. Evaluate the success of a DEM-corrected smoothing of the original polygons ☐
+El notebook de procesamiento crudo está disponible en `src/main.ipynb`. Para trabajo futuro, se recomienda usar [Smoothify](https://github.com/DPIRD-DMA/Smoothify) en lugar de GDAL/GRASS ya que es una biblioteca de Python diseñada específicamente para este tipo de suavizado de polígonos.
 
-4. Explore incorporating impervious surface cover into the model ☐
+## Datos de salida
 
-5. Compare all outputs, decide on a preferred version ☐
+Los datos procesados están disponibles en el repositorio hermano con la interfaz de usuario: [ciut-inundaciones-mapeo/public/data](https://github.com/nlebovits/ciut-inundaciones-mapeo/tree/main/public/data)
 
-6. Scale to the entire Partido de La Plata ☐
+## Configuración
+
+Instala el repositorio usando `git clone`. Navega al directorio raíz e instala el entorno virtual y las dependencias usando `uv sync`. Una vez hecho esto, ejecuta `uv run pre-commit install` en el directorio raíz para configurar los hooks de precommit (configurados en `.pre-commit-config.yaml`).
+
